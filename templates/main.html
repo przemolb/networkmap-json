@@ -1,0 +1,28 @@
+<html>
+    <body>
+        {% include 'help.html' %}
+        {% include 'no_of_servers.html' %}
+        <table class="blueTable">
+            <thead>
+                <tr>
+                    <th width="7%">Serial</th>
+                    <th width="8%">Platform version</th>
+                    <th>Legal identity</th>
+                    <th>Host</th>
+                    <th>Port</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                    <tr>
+                        <td>{{ row.serial }}</td>
+                        <td align="right">{{ row.platform_version }}</td>
+                        <td>{{ row.legal_identity }}</td>
+                        <td>{{ row.host }}</td>
+                        <td>{{ row.port }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </body>
+</html>
