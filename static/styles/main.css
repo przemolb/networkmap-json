@@ -1,5 +1,14 @@
+hr {
+  color:#afc7ed;
+}
+
 p.menu {
     font-family: "Lucida Console", Monaco, monospace;
+}
+
+p.environment_description {
+  font-family: "Lucida Console", Monaco, monospace;
+  font-size: 90%;
 }
 
 p.number_of_servers {
