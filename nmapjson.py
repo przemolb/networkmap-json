@@ -8,7 +8,7 @@ try:
     import requests
     from flask import Flask, Response, redirect, render_template, request, url_for
     from flask_table import Table, Col
-    from jinja2.nodes import Output
+    # from jinja2.nodes import Output
     import configparser
 except ImportError as error:
     print("\n\nMissing python 3 library: '{0}' - please install it with i.e. 'pip3 install {0}'\n\n".format(error.name))
