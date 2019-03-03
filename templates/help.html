@@ -1,15 +1,15 @@
-<html>
-    <head>
-        <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/main.css') }}">
-    </head>
-    <body>
-        <p class="menu">
-            <!-- <font-family: "Lucida Console", Monaco, monospace;>Available environments:</font-family> -->
-            Available environments:
-            {% for env in environments %}
-                <a href=http://127.0.0.1:5000/env/{{ env }}>{{ env }}</a>
-            {% endfor %}
-        </p>
-        <hr>
-    </body>
-</html>
+<p>
+    <A NAME="top of the page"></A>
+</p>
+<head>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/main.css') }}">
+</head>
+<body>
+    <p class="menu">
+        Available environments:
+        {% for env in environments %}
+            <a href=http://127.0.0.1:5000/env/{{ env }}>{{ env }}</a>
+        {% endfor %}
+    </p>
+    <hr>
+</body>
