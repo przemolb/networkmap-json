@@ -16,6 +16,14 @@ p.number_of_servers {
   font-size: 80%;
 }
 
+.right{
+  float:right;
+}
+
+.left{
+  float:left;
+}
+
 table.blueTable {
     font-family: "Lucida Console", Monaco, monospace;
     border: 1px solid #1C6EA4;
