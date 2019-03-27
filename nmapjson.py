@@ -6,10 +6,13 @@ try:
     import json
     import os
     import requests
-    from flask import Flask, Response, redirect, render_template, request, url_for
+    from flask import Flask, Response, redirect, render_template, request, url_for, send_file
     from flask_table import Table, Col
     # from jinja2.nodes import Output
     import configparser
+    from io import StringIO, BytesIO
+    import csv
+    import datetime
 except ImportError as error:
     print("\n\nMissing python 3 library: '{0}' - please install it with i.e. 'pip3 install {0}'\n\n".format(error.name))
     sys.exit(1)
@@ -89,7 +92,56 @@ def env(envname):
                     ))
             no_of_servers = len(rows)
             description=environments.getEnvDescription(envname)
-    return render_template("main.html", rows=rows, environments=environments.getEnvironmentsList(), no_of_servers=no_of_servers, description=description)
+    return render_template("main.html", rows=rows, env=envname, environments=environments.getEnvironmentsList(), no_of_servers=no_of_servers, description=description)
+
+def read_all_servers(envname):
+    environments.rereadIniFile()
+    if envname not in environments.getEnvironmentsList():
+        return redirect(url_for('help'))
+    else:
+        rows = list()
+        nwm_url = environments.getUrlForEnvironment(envname)
+        try:
+            response = requests.get(nwm_url, timeout=5)
+        except requests.exceptions.Timeout:
+            rows.append('ERROR: Timeout')
+            error_message='Failed to establish connection: timeout while connecting to "' + envname + '"'
+        except requests.exceptions.ConnectionError:
+            rows.append('ERROR: ConnectionError')
+            no_of_servers = 0
+            error_message='Failed to establish connection: url of "' + envname + '" not known'
+        else:
+            nwmlist = json.loads(response.text)
+            return nwmlist
+
+@app.route('/env/<envname>/csv')
+def env_csv(envname):
+    nwmlist = read_all_servers(envname)
+    csv_output_text = StringIO()
+    # writer = csv.writer(csv_output_text, dialect='excel', delimiter=',')
+    writer = csv.writer(csv_output_text)
+    writer.writerow(['Serial', 'Platform Version', 'Legal identity', 'Host', 'Port'])
+    for item in nwmlist:
+        writer.writerow([
+            str(item.get('Serial')),
+            str(item.get('Platform Version')),
+            str(item.get('Legal Identities')[0]),
+            str(item.get('addresses')[0]['host']),
+            str(item.get('addresses')[0]['port'])
+    ])
+    csv_output_binary = BytesIO()
+    csv_output_binary.write(csv_output_text.getvalue().encode('utf-8'))
+    csv_output_binary.seek(0)
+    csv_output_text.close()
+    date_time = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+    return send_file(csv_output_binary, as_attachment=True, attachment_filename="{}-{}.csv".format(envname,date_time), mimetype='text/csv')
+
+# taken from https://stackoverflow.com/questions/23112316/using-flask-how-do-i-modify-the-cache-control-header-for-all-output/23115561#23115561
+@app.after_request
+def add_header(response):
+    # force web browsers not to cache it
+    response.cache_control.max_age = 0
+    return response    
 
 if __name__ == '__main__':
     environments = Envs()

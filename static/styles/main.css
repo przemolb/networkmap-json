@@ -20,8 +20,13 @@ p.number_of_servers {
   float:right;
 }
 
+.center {
+  float:center;
+}
+
 .left{
   float:left;
+  width:50%;
 }
 
 table.blueTable {
