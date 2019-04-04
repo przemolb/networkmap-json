@@ -20,7 +20,12 @@ except ImportError as error:
 class Envs:
     
     def readIniFile(self):
-        self.config.read(os.path.splitext(__file__)[0] + '.ini') # base name + 'ini'
+        self.config_file_name = os.path.splitext(__file__)[0] + '.ini'
+        if not os.path.exists(self.config_file_name):
+            print("\n\nERROR: missing config file: '{0}'\n\n".format(self.config_file_name))
+            sys.exit(2)
+        else:
+            self.config.read(self.config_file_name) # base name + 'ini'
 
     def __init__(self):
         self.config = configparser.ConfigParser()
