@@ -13,10 +13,12 @@ try:
     from io import StringIO, BytesIO
     import csv
     import datetime
+    import webbrowser
 except ImportError as error:
     print("\n\nMissing python 3 library: '{0}' - please install it with i.e. 'pip3 install {0}'\n\n".format(error.name))
     sys.exit(1)
 
+tab_not_opened = True
 class Envs:
     
     def readIniFile(self):
@@ -62,6 +64,11 @@ def help():
 app = Flask(__name__)
 app.add_url_rule('/', 'help', help)
 app.register_error_handler(404, lambda x: help())
+if tab_not_opened:
+    # global tab_not_opened
+    webbrowser.open_new_tab("http://127.0.0.1:5000/")
+    tab_not_opened = False
+
 
 @app.route('/')
 def reroute_to_help():
@@ -150,4 +157,5 @@ def add_header(response):
 
 if __name__ == '__main__':
     environments = Envs()
-    app.run(debug=True, port=5000) #run app in debug mode on port 5000
+    app.run(debug=True, port=5000, use_reloader=False) #run app in debug mode on port 5000
+
