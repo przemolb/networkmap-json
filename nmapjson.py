@@ -14,6 +14,7 @@ try:
     import csv
     import datetime
     import webbrowser
+    import re
 except ImportError as error:
     print("\n\nMissing python 3 library: '{0}' - please install it with i.e. 'pip3 install {0}'\n\n".format(error.name))
     sys.exit(1)
@@ -98,7 +99,7 @@ def env(envname):
                 rows.append(dict(\
                     serial=str(item.get('Serial')),
                     platform_version=str(item.get('Platform Version')),
-                    legal_identity=str(item.get('Legal Identities')[0]),
+                    legal_identity=str((item.get('Legal Identities')[0]).get('Name')),
                     host=str(item.get('addresses')[0]['host']),
                     port=str(item.get('addresses')[0]['port'])
                     ))
@@ -132,12 +133,48 @@ def env_csv(envname):
     csv_output_text = StringIO()
     # writer = csv.writer(csv_output_text, dialect='excel', delimiter=',')
     writer = csv.writer(csv_output_text)
-    writer.writerow(['Serial', 'Platform Version', 'Legal identity', 'Host', 'Port'])
+    writer.writerow(['Serial', 'Platform Version', 'O', 'L', 'C', 'OU', 'CN', 'S', 'Host', 'Port'])
     for item in nwmlist:
+        LE=str((item.get('Legal Identities')[0]).get('Name'))
+        O =re.search('O=(.*?),' , LE)
+        L =re.search('L=(.*?),' , LE)
+        C =re.search('C=(.*)'   , LE)
+        OU=re.search('OU=(.*?),', LE)
+        CN=re.search('CN=(.*?),', LE)
+        S =re.search('S=(.*?),' , LE)
+        if O:
+            O_output=O.group(1)
+        else:
+            O_output=''
+        if L:
+            L_output=L.group(1)
+        else:
+            L_output=''
+        if C:            
+            C_output=C.group(1)
+        else:
+            C_output=''
+        if OU:
+            OU_output=OU.group(1)
+        else:
+            OU_output=''
+        if CN:
+            CN_output=CN.group(1)
+        else:
+            CN_output=''
+        if S:
+            S_output=S.group(1)
+        else:
+            S_output=''
         writer.writerow([
             str(item.get('Serial')),
             str(item.get('Platform Version')),
-            str(item.get('Legal Identities')[0]),
+            O_output,
+            L_output,
+            C_output,
+            OU_output,
+            CN_output,
+            S_output,
             str(item.get('addresses')[0]['host']),
             str(item.get('addresses')[0]['port'])
     ])
