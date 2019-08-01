@@ -48,9 +48,8 @@ url=https://URL2/network-map/json/node-infos
 description=Full description of environment_2
 
 ```
-- run `./nmapjson.py`
-- in your web browser go to http://127.0.0.1:5000/
-- click one of the available environments
+- run `./run.it`
+- click one of the available environments at the top of web page
 
 Notes
 ----------------
